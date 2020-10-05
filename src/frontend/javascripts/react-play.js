@@ -1,13 +1,13 @@
 'use strict';
 
-const Eyes = ({ onClick , curX, curY, rot}) => {
-    const r = Math.round(Math.sqrt(Math.pow(curX,2)+Math.pow(curY,2)));
+const Eyes = ({ targetX, targetY, rot}) => {
+    const r = Math.round(Math.sqrt(Math.pow(targetX,2)+Math.pow(targetY,2)));
     const adjust = rot * (Math.PI/180);
-    const angle = Math.atan2(curY, curX) - adjust;
-    const x = r * Math.cos(angle);
-    const y = r * Math.sin(angle);
+    const theta = Math.atan2(targetY, targetX) - adjust;
+    const x = r * Math.cos(theta);
+    const y = r * Math.sin(theta);
     return (
-        <g onClick={onClick}>
+        <g>
             <circle cx="-5" cy="0" r={4} fill="white" />
             <circle cx="5" cy="0" r={4} fill="white" />
             <g>
@@ -31,23 +31,45 @@ const Body = ({ colour }) => {
 class Ghost extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            x: props.x,
+            y: props.y
+        }
+    }
+
+    componentDidMount() {
+        this.timerID = setInterval(
+            () => this.tick(),
+            200
+        );
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.timerID);
+    }
+
+    tick() {
+        this.setState((state, props) => ({
+            x: state.x + Math.sign(props.curX - state.x)*3,
+            y: state.y + Math.sign(props.curY - state.y)*3
+        }));
     }
 
     render() {
-        const x = Math.max(-3, Math.min(3, Math.round((this.props.curX - this.props.x)/10)));
-        const y = Math.max(-3, Math.min(3, Math.round((this.props.curY - this.props.y)/10)));
+        const x = Math.max(-3, Math.min(3, Math.round((this.props.curX - this.state.x)/10)));
+        const y = Math.max(-3, Math.min(3, Math.round((this.props.curY - this.state.y)/10)));
         return (
         <g>
-        <g transform={`translate(${this.props.x}, ${this.props.y}) rotate(${this.props.angle})`}>
+        <g transform={`translate(${this.state.x}, ${this.state.y}) rotate(${this.props.angle})`}>
             <Body colour={this.props.colour} />
-            <Eyes onClick={this.props.onClick} curX={x} curY={y} rot={this.props.angle}/>
+            <Eyes targetX={x} targetY={y} rot={this.props.angle}/>
         </g>
         </g>
         );
     }
 }
 
-class Ghosts extends React.Component {
+class Game extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -70,7 +92,7 @@ class Ghosts extends React.Component {
 
     componentWillUnmount() {
         clearInterval(this.timerID);
-        }
+    }
 
     tick() {
         this.setState((state, props) => ({
@@ -80,10 +102,10 @@ class Ghosts extends React.Component {
 
     render() {
         return (
-            <div className="Ghosts">
-                <svg viewBox="0 0 100 100" style={{ width: 100, height: 100 }} onMouseMove={this._onMouseMove.bind(this)}>
-                    <Ghost x={30} y={20} colour="blue" angle={this.state.angle} curX={this.state.curX} curY={this.state.curY} onClick={() => alert("hi")} />
-                    <Ghost x={70} y={35} colour="red" angle={this.state.angle} curX={this.state.curX} curY={this.state.curY} onClick={() => alert("hello")} />
+            <div className="Game" style={{ width: 600, height: 400 }} >
+                <svg viewBox="0 0 600 400" style={{ width: 600, height: 400 }} onMouseMove={this._onMouseMove.bind(this)}>
+                    <Ghost x={30} y={20} colour="blue" angle={this.state.angle} curX={this.state.curX} curY={this.state.curY}/>
+                    <Ghost x={70} y={35} colour="red" angle={this.state.angle} curX={this.state.curX} curY={this.state.curY}/>
                 </svg>
             </div>
         );
@@ -92,4 +114,4 @@ class Ghosts extends React.Component {
 
 
 let domContainer = document.querySelector('#react_container');
-ReactDOM.render(<Ghosts/>, domContainer);
+ReactDOM.render(<Game/>, domContainer);
