@@ -1,0 +1,41 @@
+{
+  "name": "react-play",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "A React playground",
+  "config": {
+    "port": "3000",
+    "host": "localhost",
+    "maps": "./test/test-cave",
+    "file": "./src/server/config/defaults.json"
+  },
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./src/start-server.js",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
+  },
+  "author": "chrisesharp",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.19.2",
+    "express": "^4.17.1",
+    "npm": "^6.14.7",
+    "parcel-bundler": "^1.12.4",
+    "react": "^16.13.1",
+    "socket.io": "^2.3.0",
+    "socket.io-client": "^2.3.0",
+    "underscore": "^1.10.2"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.9.6",
+    "@babel/preset-react": "^7.10.4",
+    "@pact-foundation/pact": "^9.11.0",
+    "babel-jest": "^26.0.1",
+    "dot-prop": "^5.3.0",
+    "jest": "^26.0.1",
+    "jest-pact": "^0.6.0",
+    "node-forge": ">=0.10.0"
+  }
+}
